@@ -1,4 +1,4 @@
-def busca_em_largura_com_distancia(grafo, inicio):
+def busca_em_largura(grafo, inicio):
     if inicio not in grafo:
         raise ValueError(f"O vértice inicial '{inicio}' não existe no grafo.")
     
@@ -42,7 +42,7 @@ grafo = {
 
 inicio = 'a'
 try:
-    ordem_visita, distancias = busca_em_largura_com_distancia(grafo, inicio)
+    ordem_visita, distancias = busca_em_largura(grafo, inicio)
     print(f"Ordem de visita a partir de '{inicio}': {' -> '.join(ordem_visita)}")
     print(f"Distâncias a partir de '{inicio}': {distancias}")
     
