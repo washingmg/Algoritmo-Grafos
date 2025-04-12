@@ -1,55 +1,33 @@
-class Vertice:
-    def __init__(self, nome):
-        self.nome = nome
-        self.vizinhos = []
+def busca_em_profundidade(grafo, origem, destino):
 
-    def adicionar_vizinho(self, vizinho_nome):
-        if vizinho_nome not in self.vizinhos:
-            self.vizinhos.append(vizinho_nome)
+    if origem not in grafo:
+        raise ValueError(f"Vértice de origem '{origem}' não existe no grafo.")
+    if destino not in grafo:
+        raise ValueError(f"Vértice de destino '{destino}' não existe no grafo.")
 
-class Grafo:
-    def __init__(self):
-        self.vertices = {}
+    visitados = set()       
+    caminho_atual = []      
+    caminho_encontrado = [] 
 
-    def adicionar_vertice(self, nome):
-        if nome not in self.vertices:
-            self.vertices[nome] = Vertice(nome)
+    def explorar(vertice):
+        visitados.add(vertice)
+        caminho_atual.append(vertice)
 
-    def adicionar_aresta(self, origem, destino):
-        self.adicionar_vertice(origem)
-        self.adicionar_vertice(destino)
-        self.vertices[origem].adicionar_vizinho(destino)
+        if vertice == destino:
+            if not caminho_encontrado or len(caminho_atual) < len(caminho_encontrado):
+                caminho_encontrado[:] = caminho_atual.copy()
+        else:
+            for vizinho in grafo.get(vertice, []):
+                if vizinho not in visitados:
+                    explorar(vizinho)
 
-    def construir_de_dict(self, grafo_dict):
-        for origem, destinos in grafo_dict.items():
-            for destino in destinos:
-                self.adicionar_aresta(origem, destino)
+        visitados.remove(vertice)
+        caminho_atual.pop()
 
-    def encontrar_menor_caminho(self, origem, destino):
-        if origem not in self.vertices or destino not in self.vertices:
-            return None
+    explorar(origem)
+    return caminho_encontrado
 
-        visitados, caminho_atual, menor_caminho = set(), [], []
-
-        def dfs_recursiva(vertice_nome):
-            visitados.add(vertice_nome)
-            caminho_atual.append(vertice_nome)
-
-            if vertice_nome == destino:
-                if not menor_caminho or len(caminho_atual) < len(menor_caminho):
-                    menor_caminho[:] = caminho_atual.copy()
-            else:
-                for vizinho_nome in self.vertices[vertice_nome].vizinhos:
-                    if vizinho_nome not in visitados:
-                        dfs_recursiva(vizinho_nome)
-
-            visitados.remove(vertice_nome)
-            caminho_atual.pop()
-
-        dfs_recursiva(origem)
-        return menor_caminho
-
-exemplo_grafo = {
+grafo = {
     'a': ['b', 'd', 'i'],
     'b': ['a', 'h'],
     'c': ['d', 'f', 'h'],
@@ -58,16 +36,19 @@ exemplo_grafo = {
     'f': ['c', 'g'],
     'g': ['f'],
     'h': ['b', 'c'],
-    'i': ['a', 'e']
+    'i': ['a', 'e'],
 }
 
-grafo = Grafo()
-grafo.construir_de_dict(exemplo_grafo)
-
 origem, destino = 'a', 'g'
-caminho = grafo.encontrar_menor_caminho(origem, destino)
 
-if caminho:
-    print(f"\nCaminho encontrado de {origem} para {destino}: {' -> '.join(caminho)}")
-else:
-    print(f"\nNão existe caminho de {origem} para {destino}")
+try:
+    caminho = busca_em_profundidade(grafo, origem, destino)
+    print("\nResultado da Busca em Profundidade:")
+    if caminho:
+        print(f"Caminho encontrado de {origem} para {destino}: {' -> '.join(caminho)}")
+        print(f"Tamanho do caminho: {len(caminho)-1} arestas")
+    else:
+        print(f"Não existe caminho de {origem} para {destino}")
+        
+except ValueError as e:
+    print(f"Erro: {e}")
