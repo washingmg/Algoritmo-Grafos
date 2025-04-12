@@ -9,7 +9,7 @@ def busca_em_profundidade(grafo, origem, destino):
     caminho_atual = []      
     caminho_encontrado = [] 
 
-    def explorar(vertice):
+    def percorrer_grafo(vertice):
         visitados.add(vertice)
         caminho_atual.append(vertice)
 
@@ -19,12 +19,12 @@ def busca_em_profundidade(grafo, origem, destino):
         else:
             for vizinho in grafo.get(vertice, []):
                 if vizinho not in visitados:
-                    explorar(vizinho)
+                    percorrer_grafo(vizinho)
 
         visitados.remove(vertice)
         caminho_atual.pop()
 
-    explorar(origem)
+    percorrer_grafo(origem)
     return caminho_encontrado
 
 grafo = {
